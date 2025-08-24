@@ -1,0 +1,70 @@
+﻿@page "/AddShave"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.EntityFrameworkCore
+@using ReminderShaveBlazor.Data
+@using ReminderShaveBlazor.Models
+@using System.ComponentModel.DataAnnotations
+@inject AppDbContext Db
+@inject NavigationManager Nav
+
+<h3>Add Shave</h3>
+
+<EditForm Model="@shave" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Shave Status</label>
+        <InputSelect @bind-Value="shave.Status" class="form-control">
+            @foreach (var status in Enum.GetValues(typeof(ShaveStatus)))
+            {
+                <option value="@status">@status</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => shave.Status)" />
+    </div>
+
+    <div class="form-group">
+        <label>Shaved On</label>
+        <InputDate @bind-Value="shave.ShavedOn" class="form-control" />
+        <ValidationMessage For="@(() => shave.ShavedOn)" />
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Save</button>
+    <button type="button" class="btn btn-secondary mt-2" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+<p class="text-danger">@_successMessage</p>
+
+@code {
+    private Shave shave = new();
+    private string? _successMessage;
+
+    private async Task Save()
+    {
+        if (shave.ShavedOn != null && shave.ShavedOn < DateTime.Today)
+        {
+            _successMessage = "Date cannot be in the past!";
+            return;
+        }
+
+        var shaveInstance = await Db.Shaves.FirstOrDefaultAsync(x => x.ShavedOn.HasValue && shave.ShavedOn.HasValue &&
+                              x.ShavedOn.Value == shave.ShavedOn.Value);
+
+        if (shaveInstance is not null)
+        {
+            _successMessage = "Cannot shave twice on same day!";
+            return;
+        }
+
+        Db.Shaves.Add(shave);
+        await Db.SaveChangesAsync();
+        _successMessage = "Shave saved successfully!";
+        Nav.NavigateTo("/counter");
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/counter");
+    }
+}

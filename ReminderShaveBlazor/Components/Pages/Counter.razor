@@ -1,0 +1,57 @@
+﻿@page "/counter"
+@using Microsoft.EntityFrameworkCore
+@using ReminderShaveBlazor.Data
+@using ReminderShaveBlazor.Models
+@inject AppDbContext _context
+@inject NavigationManager Nav
+
+<PageTitle>Shaves</PageTitle>
+
+<h1>Add Shaves</h1>
+
+<button class="btn btn-primary mb-2" @onclick="AddNew">Add Product</button>
+
+@if (shaves == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!shaves.Any())
+{
+    <p>No shaves found.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shave in shaves)
+            {
+                <tr>
+                    <td>@shave.Id.ToString()</td>
+                    <td>@shave.Status</td>
+                    <td>@shave.ShavedOn?.ToString("dd-MMM-yy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Shave[]? shaves;
+
+    private void AddNew()
+    {
+        Nav.NavigateTo("AddShave");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        shaves = await _context.Shaves.ToArrayAsync();
+    }
+}
