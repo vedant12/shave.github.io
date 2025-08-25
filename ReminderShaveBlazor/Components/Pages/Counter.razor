@@ -9,49 +9,137 @@
 
 <h1>Add Shaves</h1>
 
-<button class="btn btn-primary mb-2" @onclick="AddNew">Add Product</button>
+<button class="btn btn-primary mb-2" @onclick="AddNew">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 18 18">
+        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </svg>
+    &nbsp; Add Product
+</button>
 
-@if (shaves == null)
+@if (pagedResult == null)
 {
-    <p><em>Loading...</em></p>
+        <p><em>Loading...</em></p>
 }
-else if (!shaves.Any())
+else if (!pagedResult.Items.Any())
 {
-    <p>No shaves found.</p>
+        <p>No shaves found.</p>
 }
 else
 {
-    <table class="table table-bordered table-hover table-responsive">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Status</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shave in shaves)
-            {
+        <table class="table table-bordered table-hover table-responsive">
+            <thead>
                 <tr>
-                    <td>@shave.Id.ToString()</td>
-                    <td>@shave.Status</td>
-                    <td>@shave.ShavedOn?.ToString("dd-MMM-yy")</td>
+                    <th>Id</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
                 </tr>
+            </thead>
+            <tbody>
+            @foreach (var shave in pagedResult.Items)
+            {
+                        <tr>
+                            <td>@shave.Id.ToString()</td>
+                            <td>@shave.Status</td>
+                            <td>@shave.ShavedOn?.ToString("dd-MMM-yy")</td>
+                            <td>
+                                <button @onclick="() => ViewShave(shave.Id)" class="btn btn-sm btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket-detailed" viewBox="0 0 16 16">
+                                        <path d="M4 5.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M5 7a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2z"/>
+                                        <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6zM1.5 4a.5.5 0 0 0-.5.5v1.05a2.5 2.5 0 0 1 0 4.9v1.05a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-1.05a2.5 2.5 0 0 1 0-4.9V4.5a.5.5 0 0 0-.5-.5z"/>
+                                    </svg>
+                                    View
+                                </button>
+                                <button @onclick="() => DeleteShave(shave.Id)" class="btn btn-sm btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
             }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+
+        <div class="mt-2">
+            <button class="btn btn-primary me-2" @onclick="PrevPage" disabled="@(_pageIndex == 1)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                </svg>
+                Previous
+            </button>
+            <button class="btn btn-primary" @onclick="NextPage" disabled="@(pagedResult.TotalCount <= _pageIndex * _pageSize)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                </svg>
+                Next
+            </button>
+            <span class="ms-3">Page @_pageIndex of @Math.Ceiling((double)pagedResult.TotalCount / _pageSize)</span>
+        </div>
 }
 
 @code {
     private Shave[]? shaves;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+    private PagedResult<Shave>? pagedResult;
+    private int _pageIndex = 1;
+    private int _pageSize = 5;
 
     private void AddNew()
     {
         Nav.NavigateTo("AddShave");
     }
 
+    private void ViewShave(Guid id)
+    {
+        Nav.NavigateTo($"Detail/{id}");
+    }
+
+    private async Task DeleteShave(Guid id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete id - ${id}!");
+        if (confirmed)
+        {
+            var shave = await _context.Shaves.FindAsync(id);
+
+            if (shave is not null)
+            {
+                _context.Shaves.Remove(shave);
+                int response = await _context.SaveChangesAsync();
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        await LoadPage();
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        shaves = await _context.Shaves.ToArrayAsync();
+        await LoadPage();
+    }
+
+    private async Task LoadPage()
+    {
+        pagedResult = await _context.GetShavesAsync(_pageIndex, _pageSize);
+    }
+
+    private async Task NextPage()
+    {
+        _pageIndex++;
+        await LoadPage();
+    }
+
+    private async Task PrevPage()
+    {
+        if (_pageIndex > 1)
+        {
+            _pageIndex--;
+            await LoadPage();
+        }
     }
 }
